@@ -10,6 +10,7 @@ import (
 type UserRepository interface {
 	CreateUser(user *models.User) error
 	GetUserByUsername(username string) (*models.User, error)
+	GetUserByID(ID uint) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
 }
 
@@ -23,6 +24,14 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 
 func (r *userRepository) CreateUser(user *models.User) error {
 	return r.db.Create(user).Error
+}
+
+func (r *userRepository) GetUserByID(ID uint) (*models.User, error) {
+	var user models.User
+	if err := r.db.Where("ID = ?", ID).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
 func (r *userRepository) GetUserByUsername(username string) (*models.User, error) {

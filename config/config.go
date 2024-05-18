@@ -12,6 +12,7 @@ type Config struct {
 	Database struct {
 		DSN string
 	}
+	JWTSecret string `mapstructure:"jwt_secret"`
 }
 
 func LoadConfig() (*Config, error) {

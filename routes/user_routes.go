@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func SetupUserRoutes(router *gin.Engine, db *gorm.DB) {
+func SetupUserRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) {
 	userRepository := repositories.NewUserRepository(db)
 	userService := services.NewUserService(userRepository)
 	userController := controllers.NewUserController(userService)
@@ -19,5 +19,6 @@ func SetupUserRoutes(router *gin.Engine, db *gorm.DB) {
 	{
 		userRoutes.POST("/register", userController.Register)
 		userRoutes.POST("/login", userController.Login)
+		userRoutes.POST("/logout", userController.Logout)
 	}
 }

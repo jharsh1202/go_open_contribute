@@ -4,5 +4,6 @@ server:
 
 database:
   dsn: "root:root@tcp(db:3306)/opencontributetest?parseTime=true&loc=Local"
-  # dsn: "roor:root@tcp(127.0.0.1:3306)/opencontributetest"
 
+jwt_secret:
+  "your_jwt_secret_key" 

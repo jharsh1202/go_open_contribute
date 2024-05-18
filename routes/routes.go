@@ -6,11 +6,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func SetupRoutes(router *gin.Engine, db *gorm.DB) {
-	// // Assuming db is already initialized and passed here
-	// var db *gorm.DB
-
+func SetupRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) {
 	// Initialize and setup routes for various entities
-	SetupUserRoutes(router, db)
+	SetupUserRoutes(router, db, jwtSecret)
+	SetupOrganizationRoutes(router, db, jwtSecret)
+
 	// Add more routes setup functions here for other entities
 }

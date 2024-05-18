@@ -3,7 +3,6 @@ package services
 
 import (
 	"errors"
-	"log"
 	"open-contribute/models"
 	"open-contribute/repositories"
 
@@ -11,8 +10,9 @@ import (
 )
 
 type UserService interface {
-	RegisterUser(username, email, password string) error
+	RegisterUser(username, email, password string, isAdmin bool) error
 	LoginUser(username, password string) (*models.User, error)
+	GetUserByID(id uint) (*models.User, error)
 }
 
 type userService struct {
@@ -23,7 +23,7 @@ func NewUserService(userRepo repositories.UserRepository) UserService {
 	return &userService{userRepository: userRepo}
 }
 
-func (s *userService) RegisterUser(username, email, password string) error {
+func (s *userService) RegisterUser(username, email, password string, isAdmin bool) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -33,9 +33,9 @@ func (s *userService) RegisterUser(username, email, password string) error {
 		Username: username,
 		Email:    email,
 		Password: string(hashedPassword),
+		IsAdmin:  isAdmin,
 	}
 
-	log.Printf("user: %+v", user)
 	return s.userRepository.CreateUser(user)
 }
 
@@ -50,4 +50,8 @@ func (s *userService) LoginUser(username, password string) (*models.User, error)
 	}
 
 	return user, nil
+}
+
+func (s *userService) GetUserByID(id uint) (*models.User, error) {
+	return s.userRepository.GetUserByID(id)
 }

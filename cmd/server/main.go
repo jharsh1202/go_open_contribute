@@ -1,3 +1,4 @@
+// cmd/server/main.go
 package main
 
 import (
@@ -12,50 +13,28 @@ import (
 )
 
 func main() {
-	// Load configuration
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("Could not load config: %v", err)
 	}
 
-	// Initialize database connection
-	log.Printf("Connecting to the database: %v", cfg.Database.DSN)
 	db, err := gorm.Open(mysql.Open(cfg.Database.DSN), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Could not connect to the database: %v", err)
 	}
-	log.Printf("Database connection established: %v", db)
 
-	// Create a new Gin router
-	router := gin.Default()
-
-	// Health check endpoint
-	router.GET("/health", func(c *gin.Context) {
-		sqlDB, err := db.DB()
-		if err != nil {
-			c.JSON(500, gin.H{"status": "error", "message": "Database connection error"})
-			return
-		}
-		if err := sqlDB.Ping(); err != nil {
-			c.JSON(500, gin.H{"status": "error", "message": "Database ping error"})
-			return
-		}
-		c.JSON(200, gin.H{"status": "ok"})
-	})
-
-	// // Set trusted proxies
-	// router.SetTrustedProxies([]string{"127.0.0.1"}) // Change to your proxy IPs or set to nil if not behind a proxy
-
-	// Setup routes
-	routes.SetupRoutes(router, db)
-
-	// Auto migrate database schema
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.User{}, &models.Organization{}, &models.Project{}, &models.Goal{}, &models.Task{})
 	if err != nil {
 		log.Fatalf("Could not auto migrate database: %v", err)
 	}
 
-	// Start the server
+	router := gin.Default()
+	router.SetTrustedProxies([]string{"127.0.0.1"})
+
+	routes.SetupRoutes(router, db, cfg.JWTSecret)
+	// routes.SetupUserRoutes(router, db, cfg.JWTSecret)
+	// routes.SetupOrganizationRoutes(router, db, cfg.JWTSecret)
+
 	if err := router.Run(cfg.Server.Address); err != nil {
 		log.Fatalf("Could not start server: %v", err)
 	}
