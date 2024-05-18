@@ -24,14 +24,11 @@ func (uc *UserController) Register(c *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 
-	log.Fatalf("%v", c)
-
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("*ALL: %v", req)
-	log.Printf("Username: %v", req.Username)
+
 	if err := uc.userService.RegisterUser(req.Username, req.Email, req.Password); err != nil {
 		log.Printf("error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

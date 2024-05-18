@@ -1,5 +1,5 @@
 # Dockerfile
-FROM golang:1.22.2 as builder
+FROM golang:1.22.2
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -13,21 +13,8 @@ RUN go mod download
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
-# Build the Go app
-RUN GOARCH=arm64 GOOS=linux go build -o main cmd/server/main.go
+# Install air for live reloading (optional but recommended for development)
+RUN go install github.com/cosmtrek/air@latest
 
-# # Start a new stage from scratch
-# FROM alpine:latest
-
-# # Add ca-certificates for SSL
-# RUN apk --no-cache add ca-certificates
-
-# # Set the Current Working Directory inside the container
-# WORKDIR /root/
-
-# # Copy the Pre-built binary file from the previous stage
-# COPY --from=builder /app/main .
-# COPY config/config.yaml /root/config/config.yaml
-
-# # Command to run the executable
-CMD ["./main"]
+# Command to run the executable with air for live reloading
+CMD ["air"]

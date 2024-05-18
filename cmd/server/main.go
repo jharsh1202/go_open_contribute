@@ -43,6 +43,9 @@ func main() {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
+	// // Set trusted proxies
+	// router.SetTrustedProxies([]string{"127.0.0.1"}) // Change to your proxy IPs or set to nil if not behind a proxy
+
 	// Setup routes
 	routes.SetupRoutes(router, db)
 
