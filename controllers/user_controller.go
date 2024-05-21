@@ -2,7 +2,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 	"open-contribute/services"
 
@@ -19,10 +18,10 @@ func NewUserController(userService services.UserService) *UserController {
 
 func (uc *UserController) Register(c *gin.Context) {
 	var req struct {
-		Username string `json:"username" binding:"required"`
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-		IsAdmin  bool
+		Username  string `json:"username" binding:"required"`
+		Email     string `json:"email" binding:"required"`
+		Password  string `json:"password" binding:"required"`
+		SuperUser bool
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -30,12 +29,10 @@ func (uc *UserController) Register(c *gin.Context) {
 		return
 	}
 
-	if err := uc.userService.RegisterUser(req.Username, req.Email, req.Password, req.IsAdmin); err != nil {
+	if err := uc.userService.RegisterUser(req.Username, req.Email, req.Password, req.SuperUser); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	log.Printf("error: %v", req)
 
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }

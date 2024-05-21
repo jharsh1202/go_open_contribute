@@ -1,9 +1,9 @@
 package models
 
-import "gorm.io/gorm"
-
 type Project struct {
-	gorm.Model
+	BaseModel
+	ActiveBaseModel
+	CreatedUpdatedByBaseModel
 	Name           string `gorm:"not null"`
 	OrganizationID uint
 	Organization   Organization

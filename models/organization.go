@@ -1,9 +1,9 @@
 package models
 
-import "gorm.io/gorm"
-
 type Organization struct {
-	gorm.Model
+	BaseModel
+	ActiveBaseModel
+	CreatedUpdatedByBaseModel
 	Name    string `gorm:"unique;not null"`
 	AdminID uint   //Change later
 	// Admin   User   `gorm:"foreignKey:AdminID"`
