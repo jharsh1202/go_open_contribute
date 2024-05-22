@@ -3,6 +3,7 @@ package routes
 
 import (
 	"open-contribute/controllers"
+	"open-contribute/middlewares"
 	"open-contribute/repositories"
 	"open-contribute/services"
 
@@ -18,7 +19,7 @@ func SetupOrganizationRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) 
 	organizationController := controllers.NewOrganizationController(organizationService)
 
 	adminProtected := router.Group("/organizations")
-	// adminProtected.Use(middlewares.AuthMiddleware())
+	adminProtected.Use(middlewares.AuthMiddleware())
 	// adminProtected.Use(middlewares.AdminCheckMiddleware(userService))
 	{
 		adminProtected.POST("/", organizationController.CreateOrganization)

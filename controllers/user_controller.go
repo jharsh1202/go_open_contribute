@@ -48,13 +48,16 @@ func (uc *UserController) Login(c *gin.Context) {
 		return
 	}
 
-	user, err := uc.userService.LoginUser(req.Username, req.Password)
+	user, token, err := uc.userService.LoginUser(req.Username, req.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "user": user})
+	userResponse := map[string]interface{}{
+		"user":  user,
+		"token": token,
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "data": userResponse})
 }
 
 func (c *UserController) Logout(ctx *gin.Context) {

@@ -5,13 +5,14 @@ import (
 	"errors"
 	"open-contribute/models"
 	"open-contribute/repositories"
+	"open-contribute/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService interface {
 	RegisterUser(username, email, password string, superUser bool) error
-	LoginUser(username, password string) (*models.User, error)
+	LoginUser(username, password string) (*models.User, *string, error)
 	GetUserByID(id uint) (*models.User, error)
 }
 
@@ -39,17 +40,24 @@ func (s *userService) RegisterUser(username, email, password string, superUser b
 	return s.userRepository.CreateUser(user)
 }
 
-func (s *userService) LoginUser(username, password string) (*models.User, error) {
+func (s *userService) LoginUser(username, password string) (*models.User, *string, error) {
 	user, err := s.userRepository.GetUserByUsername(username)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, nil, errors.New("invalid credentials")
 	}
 
-	return user, nil
+	jwt, err := utils.GenerateJWT(user.ID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// user["JWT"] = jwt
+
+	return user, &jwt, nil
 }
 
 func (s *userService) GetUserByID(id uint) (*models.User, error) {
