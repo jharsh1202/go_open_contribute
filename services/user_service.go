@@ -14,6 +14,11 @@ type UserService interface {
 	RegisterUser(username, email, password string, superUser bool) error
 	LoginUser(username, password string) (*models.User, *string, error)
 	GetUserByID(id uint) (*models.User, error)
+	GetUsers() ([]models.User, error)
+	CheckUserExists(id uint) (bool, error)
+	UpdateUser(user *models.User) error
+	PatchUser(existingUser *models.User, updatedFields map[string]interface{}) error
+	DeleteUser(user *models.User) error
 }
 
 type userService struct {
@@ -55,11 +60,34 @@ func (s *userService) LoginUser(username, password string) (*models.User, *strin
 		return nil, nil, err
 	}
 
-	// user["JWT"] = jwt
-
 	return user, &jwt, nil
 }
 
 func (s *userService) GetUserByID(id uint) (*models.User, error) {
 	return s.userRepository.GetUserByID(id)
+}
+
+func (s *userService) GetUsers() ([]models.User, error) {
+	return s.userRepository.GetUsers()
+}
+
+func (s *userService) CheckUserExists(id uint) (bool, error) {
+	user, err := s.userRepository.GetUserByID(id)
+	if err != nil {
+		return false, err
+	}
+
+	return user != nil, nil
+}
+
+func (s *userService) UpdateUser(user *models.User) error { //, adminID uint
+	return s.userRepository.UpdateUser(user)
+}
+
+func (s *userService) DeleteUser(user *models.User) error { //, adminID uint
+	return s.userRepository.DeleteUser(user)
+}
+
+func (s *userService) PatchUser(existingOrg *models.User, updatedFields map[string]interface{}) error {
+	return s.userRepository.PatchUser(existingOrg, updatedFields)
 }

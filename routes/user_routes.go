@@ -20,5 +20,12 @@ func SetupUserRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) {
 		userRoutes.POST("/register", userController.Register)
 		userRoutes.POST("/login", userController.Login)
 		userRoutes.POST("/logout", userController.Logout)
+		userRoutes.GET("/:id", userController.GetUserByID)
+
+		userRoutes.GET("/", userController.GetUsers)
+		// userRoutes.POST("/", userController.CreateUser)
+		userRoutes.PUT("/:id", userController.UpdateUser)
+		userRoutes.DELETE("/:id", userController.DeleteUser)
+		userRoutes.PATCH("/:id", userController.PatchUser)
 	}
 }

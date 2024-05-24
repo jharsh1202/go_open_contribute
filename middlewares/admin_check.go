@@ -9,6 +9,7 @@ import (
 
 func AdminCheckMiddleware(service services.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		// log.Printf("ctx.Params %v", ctx.Params)
 		// userID := ctx.MustGet("userID").(uint)
 		// user, err := service.GetUserByID(userID)
 		// if err != nil || !user.IsAdmin {

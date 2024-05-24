@@ -10,8 +10,8 @@ import (
 
 // BaseModel for common fields
 type BaseModel struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
+	ID        uint      `gorm:"primaryKey"`
+	CreatedAt time.Time `gorm:"<-:create"`
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }

@@ -2,20 +2,42 @@
 package services
 
 import (
+	"errors"
 	"log"
 	"open-contribute/models"
 	"open-contribute/repositories"
 )
 
 type OrganizationService struct {
-	repo *repositories.OrganizationRepository
+	repo        *repositories.OrganizationRepository
+	userService UserService
 }
 
-func NewOrganizationService(repo *repositories.OrganizationRepository) *OrganizationService {
-	return &OrganizationService{repo: repo}
+func NewOrganizationService(repo *repositories.OrganizationRepository, userService UserService) *OrganizationService {
+	return &OrganizationService{
+		repo:        repo,
+		userService: userService,
+	}
+}
+
+func (s *OrganizationService) CheckUserExists(userID uint) (bool, error) {
+	return s.userService.CheckUserExists(userID)
+}
+
+func (s *OrganizationService) GetUserByID(userID uint) (*models.User, error) {
+	log.Printf("User ID %v", userID)
+	return s.userService.GetUserByID(userID)
 }
 
 func (s *OrganizationService) CreateOrganization(organization *models.Organization) error {
+	usr, err := s.userService.CheckUserExists(organization.AdminID)
+	if !usr {
+		return errors.New("admin user does not exist")
+	}
+	if err != nil {
+		return errors.New("admin user does not exist")
+	}
+
 	return s.repo.Create(organization)
 }
 
@@ -24,12 +46,11 @@ func (s *OrganizationService) GetOrganizationByID(id uint) (*models.Organization
 }
 
 func (s *OrganizationService) UpdateOrganization(organization *models.Organization) error { //, adminID uint
-	// if organization.AdminID != adminID {
-	// 	return errors.New("only admin can update the organization")
-	// }
-	log.Printf("%v", organization)
-
 	return s.repo.Update(organization)
+}
+
+func (s *OrganizationService) PatchOrganization(existingOrg *models.Organization, updatedFields map[string]interface{}) error {
+	return s.repo.Patch(existingOrg, updatedFields)
 }
 
 // func (s *OrganizationService) UpdateOrganization(id uint, updatedOrg *models.Organization) error {

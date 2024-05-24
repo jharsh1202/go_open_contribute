@@ -17,6 +17,8 @@ type User struct {
 	Email     string `gorm:"unique;not null"`
 	Password  string `gorm:"not null"`
 	SuperUser bool
+	// OrganizationID uint // Add this line
+	// Organization   Organization `gorm:"foreignKey:OrganizationID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"` // Add this line
 }
 
 func (u *User) BeforeSave(_ *gorm.DB) (err error) {

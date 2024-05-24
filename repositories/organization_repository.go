@@ -2,6 +2,7 @@
 package repositories
 
 import (
+	"log"
 	"open-contribute/models"
 
 	"gorm.io/gorm"
@@ -20,6 +21,7 @@ func (r *OrganizationRepository) Create(organization *models.Organization) error
 }
 
 func (r *OrganizationRepository) GetByID(id uint) (*models.Organization, error) {
+	log.Printf("ID %v", id)
 	var organization models.Organization
 	// if err := r.db.Preload("Admin").Preload("Members").First(&organization, id).Error; err != nil {
 	if err := r.db.First(&organization, id).Error; err != nil {
@@ -43,4 +45,8 @@ func (r *OrganizationRepository) List() ([]models.Organization, error) {
 		return nil, err
 	}
 	return organizations, nil
+}
+
+func (r *OrganizationRepository) Patch(existingOrg *models.Organization, updatedFields map[string]interface{}) error {
+	return r.db.Model(existingOrg).Updates(updatedFields).Error
 }
