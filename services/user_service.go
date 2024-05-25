@@ -11,7 +11,7 @@ import (
 )
 
 type UserService interface {
-	RegisterUser(username, email, password string, superUser bool) error
+	RegisterUser(username, email, password string, superUser bool, phone string) error
 	LoginUser(username, password string) (*models.User, *string, error)
 	GetUserByID(id uint) (*models.User, error)
 	GetUsers() ([]models.User, error)
@@ -29,7 +29,7 @@ func NewUserService(userRepo repositories.UserRepository) UserService {
 	return &userService{userRepository: userRepo}
 }
 
-func (s *userService) RegisterUser(username, email, password string, superUser bool) error {
+func (s *userService) RegisterUser(username, email, password string, superUser bool, phone string) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -38,6 +38,7 @@ func (s *userService) RegisterUser(username, email, password string, superUser b
 	user := &models.User{
 		Username:  username,
 		Email:     email,
+		Phone:     phone,
 		Password:  string(hashedPassword),
 		SuperUser: superUser,
 	}
@@ -76,7 +77,6 @@ func (s *userService) CheckUserExists(id uint) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
 	return user != nil, nil
 }
 

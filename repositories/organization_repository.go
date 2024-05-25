@@ -24,13 +24,14 @@ func (r *OrganizationRepository) GetByID(id uint) (*models.Organization, error) 
 	log.Printf("ID %v", id)
 	var organization models.Organization
 	// if err := r.db.Preload("Admin").Preload("Members").First(&organization, id).Error; err != nil {
-	if err := r.db.First(&organization, id).Error; err != nil {
+	if err := r.db.Preload("Admin").First(&organization, id).Error; err != nil {
 		return nil, err
 	}
 	return &organization, nil
 }
 
 func (r *OrganizationRepository) Update(organization *models.Organization) error {
+	log.Printf("Organization: - %v", organization.Admin)
 	return r.db.Save(&organization).Error
 }
 

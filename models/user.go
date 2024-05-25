@@ -14,6 +14,7 @@ type User struct {
 	ActiveBaseModel
 	CreatedUpdatedByBaseModel
 	Username  string `gorm:"unique;not null"`
+	Phone     string `gorm:"unique;not null"`
 	Email     string `gorm:"unique;not null"`
 	Password  string `gorm:"not null"`
 	SuperUser bool

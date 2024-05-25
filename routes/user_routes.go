@@ -3,6 +3,7 @@ package routes
 
 import (
 	"open-contribute/controllers"
+	"open-contribute/middlewares"
 	"open-contribute/repositories"
 	"open-contribute/services"
 
@@ -15,17 +16,28 @@ func SetupUserRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) {
 	userService := services.NewUserService(userRepository)
 	userController := controllers.NewUserController(userService)
 
-	userRoutes := router.Group("/users")
+	public := router.Group("/users")
 	{
-		userRoutes.POST("/register", userController.Register)
-		userRoutes.POST("/login", userController.Login)
-		userRoutes.POST("/logout", userController.Logout)
-		userRoutes.GET("/:id", userController.GetUserByID)
+		public.POST("/register", userController.Register)
+		public.POST("/login", userController.Login)
+	}
 
-		userRoutes.GET("/", userController.GetUsers)
-		// userRoutes.POST("/", userController.CreateUser)
-		userRoutes.PUT("/:id", userController.UpdateUser)
-		userRoutes.DELETE("/:id", userController.DeleteUser)
-		userRoutes.PATCH("/:id", userController.PatchUser)
+	// Authenticated routes (logged-in users only)
+	authProtected := router.Group("/users")
+	authProtected.Use(middlewares.AuthMiddleware()) //userService
+	{
+		authProtected.POST("/logout", userController.Logout)
+		authProtected.GET("/:id", middlewares.SelfOnlyMiddleware(userService), userController.GetUserByID)
+		authProtected.PUT("/:id", middlewares.SelfOnlyMiddleware(userService), userController.UpdateUser)
+		authProtected.DELETE("/:id", middlewares.SelfOnlyMiddleware(userService), userController.DeleteUser)
+		authProtected.PATCH("/:id", middlewares.SelfOnlyMiddleware(userService), userController.PatchUser)
+	}
+
+	// Superuser-protected routes
+	superuserProtected := router.Group("/users")
+	superuserProtected.Use(middlewares.AuthMiddleware()) //userService
+	superuserProtected.Use(middlewares.SuperuserCheckMiddleware(userService))
+	{
+		superuserProtected.GET("/", userController.GetUsers)
 	}
 }

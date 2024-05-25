@@ -23,6 +23,7 @@ func (uc *UserController) Register(c *gin.Context) {
 	var req struct {
 		Username  string `json:"username" binding:"required"`
 		Email     string `json:"email" binding:"required"`
+		Phone     string `json:"phone" binding:"required"`
 		Password  string `json:"password" binding:"required"`
 		SuperUser bool
 	}
@@ -32,7 +33,7 @@ func (uc *UserController) Register(c *gin.Context) {
 		return
 	}
 
-	if err := uc.userService.RegisterUser(req.Username, req.Email, req.Password, req.SuperUser); err != nil {
+	if err := uc.userService.RegisterUser(req.Username, req.Email, req.Password, req.SuperUser, req.Phone); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

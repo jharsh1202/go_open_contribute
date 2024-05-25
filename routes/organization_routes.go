@@ -1,4 +1,3 @@
-// routes/organization_routes.go
 package routes
 
 import (
@@ -20,8 +19,8 @@ func SetupOrganizationRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) 
 
 	// Organization
 	organizationRepository := repositories.NewOrganizationRepository(db)
-	organizationService := services.NewOrganizationService(organizationRepository, userService)
-	organizationController := controllers.NewOrganizationController(organizationService)
+	organizationService := services.NewOrganizationService(*organizationRepository, userService)
+	organizationController := controllers.NewOrganizationController(&organizationService)
 
 	// Public routes
 	public := router.Group("/organizations")
@@ -30,12 +29,18 @@ func SetupOrganizationRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) 
 		public.GET("/:id", organizationController.GetOrganizationByID)
 	}
 
+	// Auth-protected routes
+	authProtected := router.Group("/organizations")
+	authProtected.Use(middlewares.AuthMiddleware()) //userService
+	{
+		authProtected.POST("/", organizationController.CreateOrganization)
+	}
+
 	// Admin-protected routes
 	adminProtected := router.Group("/organizations")
-	adminProtected.Use(middlewares.AuthMiddleware()) // userService Pass the userService to AuthMiddleware
-	adminProtected.Use(middlewares.AdminCheckMiddleware(userService))
+	adminProtected.Use(middlewares.AuthMiddleware()) //userService
+	adminProtected.Use(middlewares.OrgAdminCheckMiddleware(userService, organizationService))
 	{
-		adminProtected.POST("/", organizationController.CreateOrganization)
 		adminProtected.PATCH("/:id", organizationController.PatchOrganization)
 		adminProtected.PUT("/:id", organizationController.UpdateOrganization)
 		adminProtected.DELETE("/:id", organizationController.DeleteOrganization)

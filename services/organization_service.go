@@ -13,14 +13,14 @@ type OrganizationService struct {
 	userService UserService
 }
 
-func NewOrganizationService(repo *repositories.OrganizationRepository, userService UserService) *OrganizationService {
-	return &OrganizationService{
-		repo:        repo,
+func NewOrganizationService(repo repositories.OrganizationRepository, userService UserService) OrganizationService {
+	return OrganizationService{
+		repo:        &repo,
 		userService: userService,
 	}
 }
 
-func (s *OrganizationService) CheckUserExists(userID uint) (bool, error) {
+func (s OrganizationService) CheckUserExists(userID uint) (bool, error) {
 	return s.userService.CheckUserExists(userID)
 }
 
