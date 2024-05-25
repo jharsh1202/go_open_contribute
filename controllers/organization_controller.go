@@ -2,7 +2,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 	"open-contribute/models"
 	"open-contribute/services"
@@ -30,7 +29,7 @@ func (c *OrganizationController) CreateOrganization(ctx *gin.Context) {
 		return
 	}
 
-	log.Printf("keys: %v", ctx.Keys)
+	//  log.Printf("keys: %v", ctx.Keys)
 
 	AdminID := ctx.Keys["user_id"].(uint)
 	admin, err := c.service.GetUserByID(AdminID)
@@ -45,7 +44,7 @@ func (c *OrganizationController) CreateOrganization(ctx *gin.Context) {
 		Admin:   *admin,
 	}
 
-	log.Printf("Organization: %v", organization)
+	//  log.Printf("Organization: %v", organization)
 
 	if err := c.service.CreateOrganization(&organization); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -61,7 +60,7 @@ func (c *OrganizationController) CreateOrganization(ctx *gin.Context) {
 // 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 // 		return
 // 	}
-// 	log.Printf("Organization: %v", organization)
+// 	//  log.Printf("Organization: %v", organization)
 // 	if err := c.service.CreateOrganization(&organization); err != nil {
 
 // 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -160,7 +159,7 @@ func (c *OrganizationController) PatchOrganization(ctx *gin.Context) {
 		return
 	}
 
-	log.Printf("Existing org: %v", existingOrg)
+	//  log.Printf("Existing org: %v", existingOrg)
 
 	var updatedFields map[string]interface{}
 	if err := ctx.ShouldBindJSON(&updatedFields); err != nil {

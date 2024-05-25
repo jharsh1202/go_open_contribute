@@ -25,7 +25,7 @@ func (s OrganizationService) CheckUserExists(userID uint) (bool, error) {
 }
 
 func (s *OrganizationService) GetUserByID(userID uint) (*models.User, error) {
-	log.Printf("User ID %v", userID)
+	//  log.Printf("User ID %v", userID)
 	return s.userService.GetUserByID(userID)
 }
 
@@ -42,6 +42,8 @@ func (s *OrganizationService) CreateOrganization(organization *models.Organizati
 }
 
 func (s *OrganizationService) GetOrganizationByID(id uint) (*models.Organization, error) {
+	// log.Printf("Organization ID %v", id)
+	log.Printf("Organization ID %v", s)
 	return s.repo.GetByID(id)
 }
 

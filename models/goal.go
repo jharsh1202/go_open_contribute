@@ -8,4 +8,6 @@ type Goal struct {
 	ProjectID uint
 	Project   Project
 	Tasks     []Task
+	OwnerID   uint
+	Owner     User
 }

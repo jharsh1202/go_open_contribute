@@ -8,4 +8,6 @@ type Project struct {
 	OrganizationID uint
 	Organization   Organization
 	Goals          []Goal
+	AdminID        uint
+	Admin          User
 }

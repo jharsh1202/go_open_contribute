@@ -31,7 +31,7 @@ func (r *OrganizationRepository) GetByID(id uint) (*models.Organization, error) 
 }
 
 func (r *OrganizationRepository) Update(organization *models.Organization) error {
-	log.Printf("Organization: - %v", organization.Admin)
+	//  log.Printf("Organization: - %v", organization.Admin)
 	return r.db.Save(&organization).Error
 }
 

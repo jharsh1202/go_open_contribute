@@ -64,7 +64,7 @@ func validateEmail(email string) error {
 }
 
 func validatePassword(password string) error {
-	// log.Printf("Validating password for user %v", password)
+	// //  log.Printf("Validating password for user %v", password)
 	// Password should be at least 8 characters long
 	if len(password) < 8 {
 		return errors.New("password must be at least 8 characters long")

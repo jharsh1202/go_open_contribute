@@ -2,7 +2,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 	"open-contribute/models"
 	"open-contribute/services"
@@ -88,7 +87,7 @@ func (uc *UserController) GetUserByID(ctx *gin.Context) {
 }
 
 func (uc *UserController) GetUsers(ctx *gin.Context) {
-	log.Printf("GetUsers")
+	//  log.Printf("GetUsers")
 	var users []models.User
 
 	users, err := uc.userService.GetUsers()
