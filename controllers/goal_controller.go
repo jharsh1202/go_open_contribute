@@ -40,7 +40,7 @@ func (c *GoalController) CreateGoal(ctx *gin.Context) {
 	// //  log.Printf("params: %v", ctx.Params)
 
 	OwnerID := ctx.Keys["user_id"].(uint)
-	log.Printf("OwnerID: %v", OwnerID)
+	// log.Printf("OwnerID: %v", OwnerID)
 	owner, err := c.service.GetUserByID(OwnerID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid admin ID"})
@@ -58,7 +58,7 @@ func (c *GoalController) CreateGoal(ctx *gin.Context) {
 		return
 	}
 
-	log.Printf("Goal: %v", project)
+	// log.Printf("Goal: %v", project)
 
 	goal := models.Goal{
 		Name:      projectRequest.Name,

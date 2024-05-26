@@ -19,9 +19,9 @@ func NewGoalService(repo repositories.GoalRepository, projectService ProjectServ
 	}
 }
 
-// func (s GoalService) CheckUserExists(userID uint) (bool, error) {
-// 	return s.organizationService.CheckUserExists(userID)
-// }
+func (s GoalService) CheckUserExists(userID uint) (bool, error) {
+	return s.projectService.CheckUserExists(userID)
+}
 
 func (s *GoalService) GetUserByID(userID uint) (*models.User, error) {
 	//  log.Printf("User ID %v", userID)

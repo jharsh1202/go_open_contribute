@@ -12,5 +12,6 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) {
 	SetupOrganizationRoutes(router, db, jwtSecret)
 	SetupProjectRoutes(router, db, jwtSecret)
 	SetupGoalRoutes(router, db, jwtSecret)
+	SetupTaskRoutes(router, db, jwtSecret)
 	// Add more routes setup functions here for other entities
 }
