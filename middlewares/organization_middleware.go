@@ -28,12 +28,12 @@ func OrgAdminCheckMiddleware(userService services.UserService, orgService servic
 
 		user, err := userService.GetUserByID(userID)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - User not found"})
 			c.Abort()
 			return
 		}
 
-		if user.SuperUser || org.AdminID == userID {
+		if org.AdminID == user.ID {
 			c.Next()
 		} else {
 			c.JSON(http.StatusForbidden, gin.H{"error": "You do not have permission to access this organization"})

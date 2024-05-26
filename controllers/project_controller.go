@@ -2,6 +2,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"open-contribute/models"
 	"open-contribute/services"
@@ -101,15 +102,15 @@ func (c *ProjectController) UpdateProject(ctx *gin.Context) {
 	var project models.Project
 
 	// Fetch the project ID from the request parameters
-	// idParam := ctx.Param("id")
-	// id, _ := strconv.ParseUint(idParam, 10, 32)
+	idParam := ctx.Param("id")
+	id, _ := strconv.ParseUint(idParam, 10, 32)
 
 	// Fetch the existing project from the database
-	// existing_project, err := c.service.GetProjectByID(uint(id))
-	// if err != nil {
-	// 	ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-	// 	return
-	// }
+	existingProject, err := c.service.GetProjectByID(uint(id))
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
 
 	// Update the project's admin to the existing project's admin
 	// project.Admin = existing_project.Admin
@@ -119,6 +120,10 @@ func (c *ProjectController) UpdateProject(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	project.Admin = existingProject.Admin
+	project.Organization = existingProject.Organization
+	// project.Organization.Admin = existingProject.Organization.Admin
 
 	// Update the project in the database
 	if err := c.service.UpdateProject(&project); err != nil {
@@ -161,18 +166,21 @@ func (c *ProjectController) ListProjects(ctx *gin.Context) {
 func (c *ProjectController) PatchProject(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
+
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid project ID"})
 		return
 	}
 
-	existingOrg, err := c.service.GetProjectByID(uint(id))
+	log.Printf("Existing project id: %v", id)
+
+	existingProject, err := c.service.GetProjectByID(uint(id))
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "project not found"})
 		return
 	}
 
-	//  log.Printf("Existing org: %v", existingOrg)
+	log.Printf("Existing project: %v", existingProject)
 
 	var updatedFields map[string]interface{}
 	if err := ctx.ShouldBindJSON(&updatedFields); err != nil {
@@ -180,10 +188,10 @@ func (c *ProjectController) PatchProject(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.service.PatchProject(existingOrg, updatedFields); err != nil {
+	if err := c.service.PatchProject(existingProject, updatedFields); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, existingOrg)
+	ctx.JSON(http.StatusOK, existingProject)
 }

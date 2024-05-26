@@ -23,7 +23,7 @@ func (r *ProjectRepository) GetByID(id uint) (*models.Project, error) {
 	//  log.Printf("ID %v", id)
 	var project models.Project
 	// if err := r.db.Preload("Admin").Preload("Members").First(&project, id).Error; err != nil {
-	if err := r.db.Preload("Admin").First(&project, id).Error; err != nil {
+	if err := r.db.Preload("Admin").Preload("Organization").First(&project, id).Error; err != nil {
 		return nil, err
 	}
 	return &project, nil

@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleware() gin.HandlerFunc { //userService services.UserService
+func AuthMiddleware(userService services.UserService) gin.HandlerFunc { //userService services.UserService
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -30,6 +30,13 @@ func AuthMiddleware() gin.HandlerFunc { //userService services.UserService
 		userID, err := utils.ParseJWT(token)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
+			return
+		}
+
+		user, err := userService.GetUserByID(userID)
+		if err != nil || !user.SuperUser {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Superuser access required"})
 			c.Abort()
 			return
 		}

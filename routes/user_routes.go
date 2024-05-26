@@ -24,7 +24,7 @@ func SetupUserRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) {
 
 	// Authenticated routes (logged-in users only)
 	authProtected := router.Group("/users")
-	authProtected.Use(middlewares.AuthMiddleware()) //userService
+	authProtected.Use(middlewares.AuthMiddleware(userService)) //userService
 	{
 		authProtected.POST("/logout", userController.Logout)
 		authProtected.GET("/:id", middlewares.SelfOnlyMiddleware(userService), userController.GetUserByID)
@@ -35,7 +35,7 @@ func SetupUserRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) {
 
 	// Superuser-protected routes
 	superuserProtected := router.Group("/users")
-	superuserProtected.Use(middlewares.AuthMiddleware()) //userService
+	superuserProtected.Use(middlewares.AuthMiddleware(userService)) //userService
 	superuserProtected.Use(middlewares.SuperuserCheckMiddleware(userService))
 	{
 		superuserProtected.GET("/", userController.GetUsers)

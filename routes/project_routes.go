@@ -33,20 +33,25 @@ func SetupProjectRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) {
 		public.GET("/:id", projectController.GetProjectByID)
 	}
 
-	// Auth-protected routes
-	authProtected := router.Group("/projects")
-	authProtected.Use(middlewares.AuthMiddleware()) //userService
+	// Admin-protected routes
+	adminProtected := router.Group("/projects")
+	// adminProtected.Use(middlewares.ProjectAdminCheckMiddleware(userService, projectService))
+	// adminProtected.Use(middlewares.OrgAdminCheckMiddleware(userService, organizationService))
+	// adminProtected.Use(middlewares.SuperuserCheckMiddleware(userService))
+	adminProtected.Use(middlewares.AuthMiddleware(userService))
 	{
-		authProtected.POST("/", projectController.CreateProject)
+		adminProtected.POST("/", projectController.CreateProject)
+		adminProtected.PATCH("/:id", projectController.PatchProject)
+		adminProtected.PUT("/:id", projectController.UpdateProject)
+		adminProtected.DELETE("/:id", projectController.DeleteProject)
 	}
 
-	// // Admin-protected routes
-	// adminProtected := router.Group("/projects")
-	// adminProtected.Use(middlewares.AuthMiddleware()) //userService
-	// adminProtected.Use(middlewares.OrgAdminCheckMiddleware(userService, projectService))
+	// Admin-protected routes
+	// projectAdminProtected := router.Group("/projects")
+
+	// adminProtected.Use(middlewares.ProjectAdminCheckMiddleware(userService, projectService))
 	// {
-	// 	adminProtected.PATCH("/:id", projectController.PatchProject)
-	// 	adminProtected.PUT("/:id", projectController.UpdateProject)
-	// 	adminProtected.DELETE("/:id", projectController.DeleteProject)
+	// 	projectAdminProtected.POST("/", projectController.CreateProject)
 	// }
+
 }

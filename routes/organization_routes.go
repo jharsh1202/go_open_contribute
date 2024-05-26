@@ -31,14 +31,14 @@ func SetupOrganizationRoutes(router *gin.Engine, db *gorm.DB, jwtSecret string) 
 
 	// Auth-protected routes
 	authProtected := router.Group("/organizations")
-	authProtected.Use(middlewares.AuthMiddleware()) //userService
+	authProtected.Use(middlewares.AuthMiddleware(userService)) //userService
 	{
 		authProtected.POST("/", organizationController.CreateOrganization)
 	}
 
 	// Admin-protected routes
 	adminProtected := router.Group("/organizations")
-	adminProtected.Use(middlewares.AuthMiddleware()) //userService
+	adminProtected.Use(middlewares.AuthMiddleware(userService)) //userService
 	adminProtected.Use(middlewares.OrgAdminCheckMiddleware(userService, organizationService))
 	{
 		adminProtected.PATCH("/:id", organizationController.PatchOrganization)
