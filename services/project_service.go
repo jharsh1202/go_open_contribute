@@ -45,6 +45,7 @@ func (s *ProjectService) CreateProject(project *models.Project) error {
 }
 
 func (s *ProjectService) GetProjectByID(id uint) (*models.Project, error) {
+	// log.Printf("Project ID - %v", id)
 	return s.repo.GetByID(id)
 }
 
